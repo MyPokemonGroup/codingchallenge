@@ -1,0 +1,22 @@
+(a) Your host has a directory with 10000 files stored within 1000 assorted directories.
+Each file has the following format
+
+Bob Johnson
++1 (310) 293 4332
+
+Write a single-line bash command that will count the number of entries from the "310" area code.
+
+After changing to the directory, we would run grep recursively and count the number
+of lines (files) that is returned from that grep command.
+
+$ grep ' (310) ' --files-with-matches --directories='recurse' . | wc -l
+
+================================================================================
+
+(b) Assume you have 50 virtual machine instances. What command would you run to collect the disk-free-space off of those 50 instances?
+
+If the VM instances are running on the same host, and the VMs are mounted in a special
+directory like "/VirtualMachine/", we can use a combination of df, grep, and awk
+to output disk usage capacity and mounted location onto the terminal.
+
+$ df -h | grep -E 'Filesystem|VirtualMachine' | awk '{ if($1 == "Filesystem") print $5 " " $9; else print $5 "\t " $9 }'

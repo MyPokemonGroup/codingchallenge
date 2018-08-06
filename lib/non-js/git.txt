@@ -1,0 +1,22 @@
+Show the git commands you would use for the following operations:
+
+create a new git repo
+
+	$ git init
+
+================================================================================
+create a branch in our git repo
+
+	$ git branch new_branch
+
+================================================================================
+assuming the new branch has commits, merge that branch to master
+
+	$ git checkout new_branch
+	$ git merge new_branch
+
+================================================================================
+assuming a branch has dozens of cluttered commits, clean up the branch by rewriting the commits into a single commit with a clean commit message.
+
+	$ git rebase -i HEAD~<NUMBER_OF_CLUTTERED_COMMITS> master
+	And then prefix each commit line (after the top line) with "squash"

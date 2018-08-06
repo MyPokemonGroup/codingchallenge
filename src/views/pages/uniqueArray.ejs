@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+<body class="container">
+
+  <header>
+    <% include ../partials/header %>
+  </header>
+
+  <main>
+    <div class="container-fluid">
+      <div class="homepage-description js-challenge">
+        <!-- Challenge name -->
+        <h1 class="text-center">uniqueArray</h1>
+        <!-- Problem statement -->
+        <div class="problem-statement px-5">
+          <p>
+            Create a function that returns the unique elements from an unsorted array of integers.
+          </p>
+          <p class="font-weight-bold">
+            Assumption: the function condenses duplicates to unique values.
+          </p>
+        </div>
+        <!-- Gist -->
+        <div class="gist">
+          <script src="https://gist.github.com/AlvinKang/7ab38c8548e8304de82b0a64c3993c63.js"></script>
+        </div>
+        <!-- Questions -->
+        <div class="follow-up px-5">
+          <div class="question">
+            <h3>Write the Big-O for time and space complexity for the above question.
+              <br>Explain why.</h3>
+          </div>
+          <div class="response">
+            <h5>
+              Runtime:
+              <code>O(n)</code>, where
+              <code>n</code> is the length of
+              <code>inputArray</code>.
+            </h5>
+            <p>Initializing
+              <code>uniqueNums</code> and
+              <code>set</code> are
+              <code>O(1)</code> operations.</p>
+            <p>Next, let’s take a look inside the for-loop. Accessing and adding an element inside a set takes
+              <code>O(1)</code> time; adding an element to the end of the array takes an amortized
+              <code>O(1)</code> time. So the loop body runtime complexity is
+              <code>O(1)</code> .</p>
+            <p>We see that the for-loop iterates
+              <code>n</code> times, where
+              <code>n</code> is the length of
+              <code>inputArray</code>. So the runtime complexity for the for-loop is
+              <code>O(n)</code>.</p>
+            <p>
+              So adding those up, we have
+              <code>O(1) + O(n)</code> , which just simplifies to
+              <code>O(n)</code>, since
+              <code>O(n)</code> is the leading term and we ignore all other terms.
+            </p>
+          </div>
+          <div class="response">
+            <h5>
+              Space:
+              <code>O(n)</code>, where
+              <code>n</code> is the length of
+              <code>inputArray</code>.
+            </h5>
+            <p>
+              In the worst-case scenario (that takes up the most space), all numbers of
+              <code>inputArray</code> will be unique. In that case, we would have to store all the elements of the
+              <code>inputArray</code> into both
+              <code>set</code> and
+              <code>uniqueNums</code>. That’d give us
+              <code>O(2n)</code>, but since it’s Big-O, we drop the coefficient, giving us
+              <code>O(n)</code>, where
+              <code>n</code> is the length of
+              <code>inputArray</code>.
+            </p>
+
+
+          </div>
+          <div class="question">
+            <h3>Write the necessary error-checking. Explain how your error checking would be used during debugging.</h3>
+          </div>
+          <div class="response">
+            <p>
+              The obvious point of possible error is the
+              <code>inputArray</code> itself. The if-statement in the beginning of the function checks whether the
+              <code>inputArray</code> is: (1) an array and (2) non-empty.
+            </p>
+            <p>
+              Inside the for-loop, we make sure that each element of the
+              <code>inputArray</code> is a number.
+            </p>
+            <p>If
+              <code>inputArray</code> has any problems, then an
+              <code>exception</code> is thrown with a clear message about the nature of the problem.</p>
+            <p>This is useful during debugging because if the application calls this function and the
+              <code>exception</code> is thrown, it's very clear why the program was halted and the programmer can then fix the bug.</p>
+          </div>
+          <div class="question">
+            <h3>Write a unit suite for the above method. Explain why the selection of test cases was chosen.</h3>
+          </div>
+          <div class="response">
+            <p>
+              I have two groups of tests: (1) Error-checking and (2) Correctness.
+            </p>
+            <p>
+              Error-checking tests make sure the correct errors are thrown when the error-triggering conditions occur.
+            </p>
+            <p>Correctness tests make sure the function returns the correct type of value (array, in this case) and works correctly
+              for different kinds of non-error raising inputs. I chose to test single number, multiple unique numbers, multiple
+              duplicate numbers, and mixture of unique and duplicate numbers as they are reflective of the different scenarios
+              the function may be used in.
+          </div>
+        </div>
+        <!-- Test link -->
+        <div class="test-link text-right px-5">
+          <img src="/glyphicons/png/glyphicons-153-check.png" />
+          <a href="/tests">Go to tests</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+</body>
+
+</html>

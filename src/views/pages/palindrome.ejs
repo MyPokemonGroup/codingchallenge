@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+<body class="container">
+
+  <header>
+    <% include ../partials/header %>
+  </header>
+
+  <main>
+    <div class="container-fluid">
+      <div class="homepage-description js-challenge">
+        <!-- Challenge name -->
+        <h1 class="text-center">palindrome</h1>
+        <!-- Problem statement -->
+        <div class="problem-statement px-5">
+          <p>
+            Create a function
+            <code>palindrome(inputString)</code> which returns
+            <code>true</code> /
+            <code>false</code> if the input is a palindrome.
+          </p>
+          <p class="font-weight-bold">
+            Assumptions: the palindrome is case-sensitive;
+            <code>inputString</code> is non-unicode.
+          </p>
+          <p>Examples:</p>
+          <pre>
+    palindrome('Racecar') // => false
+    palindrome('RacecaR') // => true</pre>
+        </div>
+        <!-- Gist -->
+        <div class="gist">
+          <script src="https://gist.github.com/AlvinKang/7cebb87568207824ceb0ddf3431d135e.js"></script>
+        </div>
+        <!-- Questions -->
+        <div class="follow-up px-5">
+          <div class="question">
+            <h3>Write the Big-O for time and space complexity for the above question.
+              <br>Explain why.</h3>
+          </div>
+          <div class="response">
+            <h5>
+              Runtime:
+              <code>O(n)</code>, where
+              <code>n</code> is the length of
+              <code>inputString</code>.
+            </h5>
+            <p>
+              The code is mostly comprised of the for-loop. In the body of the for-loop, we see that initializing
+              <code>currentChar</code> and
+              <code>otherChar</code> are
+              <code>O(1)</code> operations because array random access based on index is
+              <code>O(1)</code>. The if-statement check and
+              <code>return</code> statement are all
+              <code>O(1)</code>.
+            </p>
+            <p>
+              We see that the for-loop iterates
+              <code>n/2</code> times, where
+              <code>n</code> is the length of
+              <code>inputString</code>. We only iterate upto the middle element because this implementation checks that the
+              <code>i</code>-th character from the start is the same as
+              <code>i</code>-th character from the end of the string at each iteration. The runtime complexity for the for-loop is
+              <code>O(n/2)</code>.
+            </p>
+            <p>
+              In conclusion, the function's runtime will be
+              <code>O(n)</code> since
+              <code>(n/2)</code> simplifies is just
+              <code>(1/2 * n)</code>, which in such case, we will drop the coefficient, just giving us
+              <code>O(n)</code>.
+            </p>
+          </div>
+          <div class="response">
+            <h5>
+              Space:
+              <code>O(1)</code>.
+            </h5>
+            <p>
+              We are just storing two variables,
+              <code>currentChar</code> and
+              <code>otherChar</code>, at each iteration of the for-loop. Since such assignments are independent of the size of the input, i.e.,
+              length of the
+              <code>inputString</code>, we get
+              <code>O(1)</code> for space.
+            </p>
+          </div>
+
+
+          <div class="question">
+            <h3>Write the necessary error-checking. Explain how your error checking would be used during debugging.</h3>
+          </div>
+          <div class="response">
+            <p>
+              The point of possible error is the
+              <code>inputString</code>. The if-statement in the beginning of the function checks whether the
+              <code>inputString</code> is: (1) a string and (2) non-empty.
+            </p>
+            <p>
+              If
+              <code>inputString</code> has any problems, then an
+              <code>exception</code> is thrown with a clear message about the nature of the problem.
+            </p>
+            <p>This is useful during debugging because if the application calls this function and the
+              <code>exception</code> is thrown, it's very clear why the program was halted and the programmer can then fix the bug.</p>
+          </div>
+          <div class="question">
+            <h3>Write a unit suite for the above method. Explain why the selection of test cases was chosen.</h3>
+          </div>
+          <div class="response">
+            <p>
+              I have two groups of tests: (1) Error-checking and (2) Correctness.
+            </p>
+            <p>
+              Error-checking tests make sure the correct errors are thrown when the error-triggering conditions occur.
+            </p>
+            <p>Correctness tests make sure the function returns the correct type of value (
+              <code>boolean</code>, in this case) and works correctly for different kinds of non-error raising inputs.</p>
+            <p>My implementation of the function is case-sensitive, meaning
+              <code>'Dad'</code> would not be a palindrome. I tested that all single-length alphanumeric and non-alphanumeric inputs return
+              <code>true</code>. I also tested for
+              <code>true</code> /
+              <code>false</code> cases of
+              <code>> 1</code> length same-type of inputs. I finally concluded the test cases with
+              <code>true</code> /
+              <code>false</code> cases of mixed-type inputs.</p>
+          </div>
+        </div>
+        <!-- Test link -->
+        <div class="test-link text-right px-5">
+          <img src="/glyphicons/png/glyphicons-153-check.png" />
+          <a href="/tests">Go to tests</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+</body>
+
+</html>

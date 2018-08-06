@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+<body class="container">
+
+  <header>
+    <% include ../partials/header %>
+  </header>
+
+  <main>
+    <div class="container-fluid">
+      <div class="homepage-description non-js">
+        <!-- Challenge name -->
+        <h1 class="text-center">Batch Processing &amp; Scraping</h1>
+        <!-- Questions -->
+        <div class="follow-up px-5">
+          <div class="question">
+            <h5>Describe the tools, software and libraries you would use to write a command-line utility that extracts the price
+              from Amazon for a product by ASIN.
+            </h5>
+            <h5>Example:</h5>
+            <br>
+            <div class="pad-code">
+              <pre>
+  `$ check-price 1492752177`
+  $8.99</pre>
+            </div>
+          </div>
+          <div class="response">
+            <p>To answer this question, I used a Python to build a small scraping module using
+              <code>BeautifulSoup</code> and
+              <code>requests</code> libraries. I found a URL on Amazon that can take in an ASIN as one of its parameters and calling a
+              <code>HTTP GET</code> request would respond with a page that includes the item and its price.</p>
+            <p>The URL looks like this:</p>
+            <div class="pad-code">
+              <code>https://www.amazon.com/s/&amp;field-keywords=${ASIN_HERE}</code>
+            </div>
+            <p>After inspecting the HTML of the response, I spotted the unique DOM element that contained the price:</p>
+            <div class="pad-code">
+              <code>&#x3C;span class=&#x22;a-offscreen&#x22;&#x3E;$50.91&#x3C;/span&#x3E;</code>
+            </div>
+            <p>And using
+              <code>BeautifulSoup</code>, I was able to parse out the price consistently for different ASINs.</p>
+          </div>
+          <!-- Gist -->
+          <div class="gist">
+            <script src="https://gist.github.com/AlvinKang/dfe1679013c444d929942b3baee80273.js"></script>
+          </div>
+          <div class="response">
+            <p>
+              After installing the necessary dependencies as shown in
+              <code>Pipfile</code> above, I just had to go to the terminal, change directory into the location of
+              <code>findPrice.py</code> and run the python script. For example, if I wanted to find the prices of two ASINs:
+            </p>
+            <ol>
+              <li>1492752177</li>
+              <li>B000V2ACH8</li>
+            </ol>
+            <p>I just need to type</p>
+            <div class="pad-code">
+              <code>$ python findPrice.py 1492752177 B000V2ACH8</code>
+            </div>
+            <p>which printed out onto the console</p>
+            <div class="pad-code">
+              <pre>$8.99<br>$50.91</pre>
+            </div>
+            <h3 class="text-danger">08/06/2018 Update: The script no longer works because Amazon has closed off the URL from automated GET requests.</h3>
+          </div>
+
+          <hr class="my-3">
+          <div class="question">
+            <h5>Assume you have a MySQL database table containing 1,000,000 ASINs. Describe a system that would check the price
+              of these as frequently as possible.</h5>
+          </div>
+          <div class="response">
+            <p>
+              The Python script I wrote takes ~1 second to get back a request for each ASIN. If the script ran on 1 million ASINs synchonously,
+              it would take ~280 hours.
+            </p>
+            <p>Assuming that there was an alternative asynchronous version of the script, a better idea would be to update these
+              prices asynchronously using two queues
+              <code>callQueue</code> and
+              <code>writeQueue</code>, a set
+              <code>waitingSet</code>, and another table
+              <code>Price</code> with two columns
+              <code>ASIN</code> and
+              <code>price</code>.</p>
+            <p>First, we would read the 1 million ASINs from the ASIN table and enqueue into
+              <code>callQueue</code>.</p>
+            <p>While
+              <code>callQueue</code> is not empty, we would dequeue an ASIN, check if it is in
+              <code>waitingSet</code>. If it is not in
+              <code>waitingSet</code> (i.e., not waiting to be written to DB), we call the asynchronous
+              <code>checkPrice()</code> function and add the ASIN to
+              <code>waitingSet</code>.
+            </p>
+            <p>If the
+              <code>callQueue</code>'s size (number of ASINs) goes under a specified threshold (e.g., 1000), we will enqueue from the
+              <code>Price</code> table.</p>
+            <p>If
+              <code>checkPrice()</code> resolves without error, it will enqueue a two-element array like
+              <code>[ASIN, price]</code> into
+              <code>writeQueue</code>.</p>
+            <p>In the case that
+              <code>checkPrice()</code> returns that the ASIN does not exist, then we will also enqueue a two-element array like
+              <code>[ASIN, "delete"]</code> into
+              <code>writeQueue</code> to delete the ASIN from the
+              <code>Price</code> table.</p>
+            <p>
+              If
+              <code>checkPrice()</code> reports another error, we will enqueue the ASIN back into
+              <code>callQueue</code> and remove it from the
+              <code>waitingSet</code>.
+            </p>
+            <p>While
+              <code>writeQueue</code> is not empty, we will dequeue a two-element array, run the appropriate query (based on the second element)
+              on the
+              <code>Price</code> table, and remove the ASIN (based on the first element) from
+              <code>waitingSet</code>.</p>
+          </div>
+          <hr class="my-3">
+          <div class="question">
+            <h5>Describe how you would schedule the batch processing of the price-checking system.</h5>
+          </div>
+          <div class="response">
+            <p>The details of the process are outlined in the previous answer.</p>
+          </div>
+          <hr class="my-3">
+          <div class="question">
+            <h5>In what order do you process the ASINs? How do you manage that? Why was that chosen?</h5>
+          </div>
+          <div class="response">
+            <p>
+              As outlined above, the ASINs are processed FIFO order of whether the ASIN was updated in the
+              <code>Price</code> table. In other words, a
+              <code>GET</code> request to fetch a given ASIN's price will only be called when it is not waiting to be written into the table.
+            </p>
+            <p>This was chosen because we want to ensure that a single call to
+              <code>checkPrice()</code> will be written to the
+              <code>Price</code> table before being updated again.</p>
+          </div>
+          <hr class="my-3">
+          <div class="question">
+            <h5>
+              How would you estimate the # of VMs needed to run this system?
+            </h5>
+          </div>
+          <div class="response">
+            <p>To estimate the # of VMs needed to run this system, we need to figure out what exactly is the bottleneck of the
+              system if we just have one VM running all 1 million ASINs.</p>
+            <p>If we see that the bottleneck appears in the part where we write to the
+              <code>Price</code> table, we could speed up the system by splitting the ASIN table into multiple partitions and assign each VM
+              to handle all the operations of the system but just for its own partition. This will prevent multiple write
+              operations from locking each other and thus write efficiently.</p>
+            <p>If the bottleneck appears in the network, like in the case when the price information is limited to be fetched
+              every 10 seconds, the optimization via partitioning may not be necessary.</p>
+          </div>
+          <hr class="my-3">
+          <div class="question">
+            <h5>What indicators would you use to determine if the system is healthy?</h5>
+          </div>
+          <div class="response">
+            <p>On the most basic level, we would look at the CPU and memory utilization of the VMs to ensure that the system
+              is working optimally. We can have a script in place such that if a VM exceeds a certain percentage (e.g., 60%)
+              CPU utilization or RAM usage threshold, it can send out a notification via email to alert the admin/engineer.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+(a) Write the MySQL CREATE statement for storing user records.
+You only need a userId and password
+
+CREATE TABLE User (
+  userId VARCHAR(16) NOT NULL PRIMARY KEY,
+  password BLOB NOT NULL
+);
+
+================================================================================
+(b) What datatype was used for the ID and why? What are the pros and cons of the ID?
+What are the security risks?
+
+We are assuming userId is the username that the user registered/logs in with.
+We will store the userId as plaintext string of at most 16 characters, and
+the minimum length (and others) can be validated on the application-side before hitting
+the database.
+
+Since we only have two columns, we would make the userId the natural choice as
+the table's PRIMARY KEY. But this would mean that the user will not be able to
+change his/her username, since that is what we are referencing the user by.
+
+Ideally, we would have another column id as the PRIMARY KEY that is automatically
+generated and incremented upon user registration, so that the user can freely
+change his/her username.
+
+As for security risks, if, on the app-side, the input sanitizer/validator failed to sanitize the
+userId string, worst-case, the userId may actually be malicious code (e.g.,
+SQL injection attack) that can be run on the system.
+
+In another case that an attacker was able to retrieve all the userIds, and the application is poorly designed, the attacker can run a Brute-Force password guessing program
+to try to log into the system. (This kind of attack is easy to thwart by using
+CAPTCHA for repeated logins or even simply disabling login for 30 minutes after
+10 failed attempts.)
+
+The userId, if personally identifiable (like a variation of the user's real name),
+can reveal personal information.
+
+================================================================================
+(c) What encryption method is used for the password? What are the pros & cons?
+What are the security risks?
+
+We can use an encryption method like AES to encrypt the password along with
+a secret_key, only known to the server. The method would be
+AES_ENCRYPT(password, secret_key), which would be stored as a BLOB.
+
+
+The pro of encryption is that it's barely better than storing the password
+as plaintext, as long as the secret_key does not become compromised. Another
+upside of storing the encrypted_password as BLOB datatype is that it is stored
+as a binary string, which is not human-readable and looks like complete gibberish.
+
+However, just encryption alone is only MARGINALLY better.
+Encryption-decryption by nature is a two-way street given the secret_key, and
+plaintext passwords should never be retrievable. The "security" that encryption
+offers relies solely on hiding the secret_key, and once that's compromised,
+an attacker can retreieve the passwords by calling AES_DECRYPT(encrypted_password,
+secret_key) to retrieve the password. Security by obscurity is a no-go.
+
+Though it is impossible to guarantee complete security, we can make password-extraction
+as difficult as possible from attackers.
+
+Encryption aside, ideally, we will perform a combination of salting and hashing,
+where, instead of storing the encrypted_password as BLOB, we have two columns:
+
+  salt CHAR(128)
+  hash_password CHAR(128)
+
+Let's say a user registers with plain_password "pass1234".
+We will first generate a random 128-character salt by running something like:
+
+  SELECT SHA2(RAND(), 512) AS salt;
+
+where 512 is the number of bits of the resulting hash.
+
+Then we will hash the concatenation of salt+plain_password with something like:
+
+  SELECT SHA2(CONCAT(salt, 'password'), 512) AS hash_password;
+
+Then we can insert into the User table:
+
+  INSERT INTO user (userId, salt, hash_password) VALUES ('username1234', salt, hash_password);
+
+Note that this usage of SHA2 as the hashing algorithm is not the best-practice
+for hashing passwords as there are more modern hashing algorithms that are not
+part of MySQL (e.g., bcrypt, pbkdf2, scrypt) that are SLOW to calculate and thus more robust
+against attacks.
+
+================================================================================
+(d) Imagine you were anticipating 100k registrations tomorrow morning.
+How would you scale this table to support the additional registrations.
+
+First, since user registration info isn't dynamic in nature, we can cache the
+existing users to reduce the amount of read queries to the DB (for logging in).
+
+Second, if there is such a high volume of user registration, we can batch INSERT
+registration info. For example, we can set up a queue that fills up 100 registrations
+before querying a single INSERT for 100 records to speed up actual table update.
+To buy sufficient time to fill up 100 registrations, a user can be required to
+verify his/her email address (if stored elsewhere in another table).

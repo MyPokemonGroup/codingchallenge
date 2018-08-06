@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <% include ../partials/head %>
-    </head>
-    <body class="container">
 
-        <header>
-            <% include ../partials/header %>
-        </header>
+<head>
+  <% include ../partials/head %>
+</head>
 
-        <main>
-            <div class="container-fluid">
-                <div class="homepage-description">
-                    <p class="text-center">
-                        Welcome to the website that explains various coding challenges!
-                    </p>
-                </div>
-            </div>
-        </main>
+<body class="container">
 
-        <footer>
-            <% include ../partials/footer %>
-        </footer>
+  <header>
+    <% include ../partials/header %>
+  </header>
 
-    </body>
+  <main>
+    <div class="jumbotron mt-5">
+      <h1 class="display-4">Earny Coding Challenge</h1>
+      <hr class="my-4">
+      <p class="lead">Welcome to the website! Please use the topbar to navigate through the various Coding Challenges!</p>
+      <a class="btn btn-primary btn-lg" href="/challenges/limitedAlert" role="button">Go to the first challenge</a>
+    </div>
+
+  </main>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+</body>
+
 </html>

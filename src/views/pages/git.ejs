@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+<body class="container">
+
+  <header>
+    <% include ../partials/header %>
+  </header>
+
+  <main>
+    <div class="container-fluid">
+      <div class="homepage-description non-js">
+        <!-- Challenge name -->
+        <h1 class="text-center">git</h1>
+        <!-- Problem statement -->
+        <div class="problem-statement px-5">
+          <p>
+            Show the
+            <code>git</code> commands you would use for the following operations:
+          </p>
+        </div>
+        <!-- Questions -->
+        <div class="follow-up px-5">
+          <div class="question">
+            <h5>Create a new git repo.</h5>
+          </div>
+          <div class="response pad-code">
+            <code>$ git init</code>
+          </div>
+          <hr class="my-3">
+          <div class="question">
+            <h5>Create a branch in our git repo.</h5>
+          </div>
+          <div class="response pad-code">
+            <code>$ git branch new_branch</code>
+          </div>
+          <hr class="my-3">
+          <div class="question">
+            <h5>Assuming the new branch has commits, merge that branch to master.</h5>
+          </div>
+          <div class="response pad-code">
+            <code>$ git checkout new_branch</code>
+            <br>
+            <code>$ git merge new_branch</code>
+          </div>
+          <hr class="my-3">
+          <div class="question">
+            <h5>Assuming a branch has dozens of cluttered commits, clean up the branch by rewriting the commits into a single
+              commit with a clean commit message.</h5>
+          </div>
+          <div class="response">
+            <div class="pad-code">
+              <code>$ git rebase -i HEAD~&lt;NUMBER_OF_CLUTTERED_COMMITS&gt; master</code>
+              <br>
+              <code>$ git merge new_branch</code>
+            </div>
+            <p>And then prefix each commit line (after the top line) with
+              <code>squash</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+</body>
+
+</html>

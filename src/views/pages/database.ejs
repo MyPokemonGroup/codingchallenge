@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+<body class="container">
+
+  <header>
+    <% include ../partials/header %>
+  </header>
+
+  <main>
+    <div class="container-fluid">
+      <div class="homepage-description non-js">
+        <!-- Challenge name -->
+        <h1 class="text-center">Database &amp; User Records</h1>
+        <!-- Questions -->
+        <div class="follow-up px-5">
+          <div class="question">
+            <h5>Write the MySQL
+              <code>CREATE</code> statement for storing user records. You only need a
+              <code>userId</code> and
+              <code>password</code>.
+            </h5>
+          </div>
+          <div class="response pad-code">
+            <code>CREATE TABLE User (
+              <br>
+                &ensp; userId VARCHAR(16) NOT NULL PRIMARY KEY,
+                <br>
+                &ensp; password BLOB NOT NULL
+                <br>
+              );</code>
+          </div>
+          <hr class="my-3">
+          <div class="question">
+            <h5>What datatype was used for the ID and why? What are the pros and cons of the ID? What are the security risks?</h5>
+          </div>
+          <div class="response">
+            <p>
+              We are assuming
+              <code>userId</code> is the username that the user registered/logs in with. We will store the
+              <code>userId</code> as plaintext string of at most 16 characters, and the minimum length (and others) can be validated on the
+              application-side before hitting the database.
+            </p>
+            <p>Since we only have two columns, we would make the
+              <code>userId</code> the natural choice as the table's
+              <code>PRIMARY KEY</code>. But this would mean that the user will not be able to change his/her username, since that is what we are
+              referencing the user by.</p>
+            <p>Ideally, we would have another column
+              <code>id</code> as the
+              <code>PRIMARY KEY</code> that is automatically generated and incremented upon user registration, so that the user can freely change
+              his/her username.</p>
+            <p>As for security risks, if, on the app-side, the input sanitizer/validator failed to sanitize the userId string,
+              worst-case, the
+              <code>userId</code> may actually be malicious code (e.g., SQL injection attack) that can be run on the system.</p>
+            <p>In another case that an attacker was able to retrieve all the
+              <code>userId</code>s, and the application is poorly designed, the attacker can run a Brute-Force password guessing program to
+              try to log into the system. (This kind of attack is easy to thwart by using CAPTCHA for repeated logins or
+              even simply disabling login for 30 minutes after 10 failed attempts.)</p>
+            <p>Lastly, the
+              <code>userId</code>, if personally identifiable (like a variation of the user's real name), can reveal personal information.</p>
+          </div>
+          <hr class="my-3">
+          <div class="question">
+            <h5>What encryption method is used for the password? What are the pros &amp; cons? What are the security risks?</h5>
+          </div>
+          <div class="response">
+            <p>We can use an encryption method like AES to encrypt the password along with a
+              <code>secret_key</code>, only known to the server. The method would be
+              <code>AES_ENCRYPT(password, secret_key)</code>, which would be stored as a
+              <code>BLOB</code>.</p>
+            <p>The pro of encryption is that it's barely better than storing the password as plaintext, as long as the
+              <code>secret_key</code> does not become compromised. Another upside of storing the
+              <code>encrypted_password</code> as
+              <code>BLOB</code> datatype is that it is stored as a binary string, which is not human-readable and looks like complete gibberish.</p>
+            <p>However, just encryption alone is only MARGINALLY better. Encryption-decryption by nature is a two-way street
+              given the
+              <code>secret_key</code>, and plaintext passwords should never be retrievable. The "security" that encryption offers relies solely
+              on hiding the
+              <code>secret_key</code>, and once that's compromised, an attacker can retreieve the passwords by calling
+              <code>AES_DECRYPT(encrypted_password, secret_key)</code> to retrieve the password. Security by obscurity is a no-go.
+              <p>Though it is impossible to guarantee complete security, we can make password-extraction as difficult as possible
+                from attackers.</p>
+              <p>Encryption aside, ideally, we will perform a combination of salting and hashing, where, instead of storing
+                the
+                <code>encrypted_password</code> as
+                <code>BLOB</code>, we have two columns:</p>
+              <div class="pad-code">
+                <code>salt CHAR(128)
+                  <br>
+                      hash_password CHAR(128)</code>
+              </div>
+              <p>Let's say a user registers with
+                <code>plain_password="pass1234"</code>. We will first generate a random 128-character salt by running something like:</p>
+              <div class="pad-code">
+                <code>SELECT SHA2(RAND(), 512) AS salt;</code>
+              </div>
+              <p>where 512 is the number of bits of the resulting hash.</p>
+              <p>Then we will hash the concatenation of
+                <code>salt + plain_password</code> with something like:</p>
+              <div class="pad-code">
+                <code>SELECT SHA2(CONCAT(salt, 'password'), 512) AS hash_password;</code>
+              </div>
+              <p>Then we can insert into the
+                <code>User</code> table:</p>
+              <div class="pad-code">
+                <code>INSERT INTO user (userId, salt, hash_password) VALUES ('username1234', salt, hash_password);</code>
+              </div>
+              <p>Note that this usage of SHA2 as the hashing algorithm is not the best-practice for hashing passwords as there
+                are more modern hashing algorithms that are not part of MySQL (e.g., bcrypt, pbkdf2, scrypt) that are SLOW
+                to calculate and thus more robust against attacks.</p>
+          </div>
+          <hr class="my-3">
+          <div class="question">
+            <h5>Imagine you were anticipating 100k registrations tomorrow morning. How would you scale this table to support
+              the additional registrations?</h5>
+          </div>
+          <div class="response">
+            <p>First, since user registration info isn't dynamic in nature, we can cache the existing users to reduce the amount
+              of read queries to the DB (for logging in).</p>
+            <p>Second, if there is such a high volume of user registration, we can batch
+              <code>INSERT</code> registration info. For example, we can set up a queue that fills up 100 registrations before querying a single
+              <code>INSERT</code> for 100 records to speed up actual table update. To buy sufficient time to fill up 100 registrations, a user
+              can be required to verify his/her email address (if stored elsewhere in another table).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+</body>
+
+</html>

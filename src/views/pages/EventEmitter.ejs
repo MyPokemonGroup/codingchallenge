@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+<body class="container">
+
+  <header>
+    <% include ../partials/header %>
+  </header>
+
+  <main>
+    <div class="container-fluid">
+      <div class="homepage-description js-challenge">
+        <!-- Challenge name -->
+        <h1 class="text-center">EventEmitter</h1>
+        <!-- Problem statement -->
+        <div class="problem-statement px-5">
+          <p>
+            Implement the
+            <code>EventEmitter</code> class from NodeJS as a node module. Only the
+            <code>on()</code> and
+            <code>emit()</code> methods are needed.
+            <br>
+            <a href="https://nodejs.org/api/events.html">https://nodejs.org/api/events.html</a>
+          </p>
+        </div>
+        <!-- Gist -->
+        <div class="gist">
+          <script src="https://gist.github.com/AlvinKang/1090350fa4d604738d5df6986a7f3d91.js"></script>
+        </div>
+        <!-- Questions -->
+        <div class="follow-up px-5">
+          <div class="question">
+            <h3>What are some performance issues with your implementation? Bugs?</h3>
+          </div>
+          <div class="response">
+            <p>First off, my crude implementation cannot handle more than one additional argument
+              <code>data</code> to the
+              <code>emit()</code> method. Any additional arguments will be ignored.</p>
+            <p>Second, to correctly execute the callback function registered through the
+              <code>on()</code> method, the developer must pass in the appropriate parameter
+              <code>data</code> attributed to the
+              <code>eventName</code>.</p>
+            <p>Also, my implementation does not have a cap on the number of listeners that can be attached to a specific event.
+              So in the case that a malicious code decides to attach 10000 listeners for
+              <code>eventName='evil'</code> by calling
+              <code>emitterInstance.on('evil', evilFunction)</code>, the
+              <code>emitterInstance</code> will have to:</p>
+            <ol>
+              <li>allocate that much memory in space to hold all those listeners in the array, and</li>
+              <li>when that event is emitted, my code will stall until all the callback functions attached to that event finish
+                running because the callbacks are run synchronously.
+              </li>
+            </ol>
+            <p>
+              Another issue, though this is not a bug, is when an error occurs within the
+              <code>EventEmitter</code> instance. If there is no registered listener for the
+              <code>'error'</code> event and an
+              <code>'error'</code> event is emitted, the application will crash. Therefore, a general best practice is to always register a listener
+              to handle
+              <code>'error'</code> events.
+            </p>
+          </div>
+        </div>
+        <!-- Test link -->
+        <div class="test-link text-right px-5">
+          <img src="/glyphicons/png/glyphicons-153-check.png" />
+          <a href="/tests">Go to tests</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+</body>
+
+</html>

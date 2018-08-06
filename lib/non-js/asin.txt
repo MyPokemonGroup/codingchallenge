@@ -1,0 +1,96 @@
+(a) Describe the tools, software and libraries you would use to write a command-line utility that extracts the price from amazon for a product by ASIN.
+e.g.
+  `$ check-price 1492752177`
+   $8.99
+
+I would use Python to build a small scraping module using BeautifulSoup and requests
+libraries. I found a URL on Amazon that can take in an ASIN as one of its
+parameters and calling a HTTP GET request would respond with a page that includes
+the item and its price.
+
+The URL looks like this:
+
+https://www.amazon.com/s/&field-keywords=${ASIN_HERE}
+
+After inspecting the HTML of the response, I spotted the unique DOM element
+that contained the price:
+
+  <span class="a-offscreen">$50.91</span>
+
+And using BeautifulSoup, I was able to parse out the price consistently for
+different ASINs.
+
+================================================================================
+(b) Assume you have a MySQL database table containing 1,000,000 ASINs.
+Describe a system that would check the price of these as frequently as possible.
+
+The script takes ~1 second to get back a request for each ASIN. If the script
+ran check-price on 1 million ASINs synchonously, it would take ~280 hours.
+
+A better idea would be to update these prices asynchronously using two queues
+(callQueue, writeQueue), a set (waitingSet), and another table (Price) with
+"ASIN" and "price" as the columns.
+
+First, we would read the 1 million ASINs from the ASIN table and enqueue into callQueue.
+
+While callQueue is not empty, we would dequeue an ASIN, check if it is
+in waitingSet. If it is not in waitingSet (i.e., not waiting to be written to DB),
+we call the asynchronous checkPrice() function and add the ASIN to waitingSet.
+
+If the callQueue's size (number of ASINs) goes under a specified threshold
+(e.g., 1000), we will enqueue from the Price table.
+
+If checkPrice() resolves without error, it will enqueue a two-element array like
+[ASIN, price] into writeQueue.
+
+In the case that checkPrice() returns that the ASIN does not exist, then we will
+also enqueue a two-element array like [ASIN, "delete"] into writeQueue to delete
+the ASIN from the table.
+
+If checkPrice() reports another error, we will enqueue the ASIN back into callQueue
+and remove it from the waitingSet.
+
+While writeQueue is not empty, we will dequeue a two-element array, run the
+appropriate query (based on the second element) on the Price table, and
+remove the ASIN (based on the first element) from waitingSet.
+
+================================================================================
+(c) Describe how you would schedule the batch processing of the price-checking system
+
+Most of the details of the process are outlined in the previous answer.
+
+================================================================================
+(d) In what order do you process the ASINs? How do you manage that? Why was that chosen?
+
+As outlined in (b), the ASINs are processed FIFO order of whether the ASIN was
+updated in the Price table. In other words, a GET request to fetch a given ASIN's
+price will only be called when it is not waiting to be written into the table.
+
+This was chosen because we want to ensure that a single call to checkPrice()
+will be written to the Price table before being updated again.
+
+================================================================================
+(e) How would you estimate the # of VMs needed to run this system?
+
+To estimate the # of VMs needed to run this system, we need to figure out what
+exactly is the bottleneck of the system if we just have one VM running all
+1 million ASINs.
+
+If we see that the bottleneck appears in the part where we write to the Price
+table, we could speed up the system by splitting the ASIN table into multiple
+partitions and assign each VM to handle all the operations of the system but
+just for its own partition. This will prevent multiple write operations from
+locking each other and thus write efficiently.
+
+If the bottleneck appears in the network, like in the case when the price information
+is limited to be fetched every 10 seconds, the optimization via partitioning may
+not be necessary.
+
+================================================================================
+(f) What indicators would you use to determine if the system is healthy?
+
+On the most basic level, we would look at the CPU and memory utilization of the VMs
+to ensure that the system is working optimally. We can have a script in place
+such that if a VM exceeds a certain percentage (e.g., 60%) CPU utilization or
+RAM usage threshold, it can send out a notification via email to alert the
+admin/engineer.
