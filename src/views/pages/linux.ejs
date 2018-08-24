@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+<main>
+    <div class="container-fluid">
+        <header>
+            <% include ../partials/header %>
+        </header>
+
+        <div class="challenge-description">
+            <div class="challenge-title">
+                <h2>Linux Commands</h2>
+                <hr>
+            </div>
+
+            <div class="text-description">
+                <h4>Write a single-line bash command that will count the number of entries from the "310" area code.</h4>
+                <hr>
+                <code>grep ' (310) ' -inr . | wc -l</code>
+                <br><br><br>
+                <h4>Assume you have 50 virtual machine instances. What command would you run to collect the disk-free-space off of those 50 instances?</h4>
+                <hr>
+                <br>
+                <code>df -k | grep 'dev/*' | awk '{print $4}' | awk '{n += $1}; END {print n/1000000}'</code>
+                <br><br>
+                <p>
+                    This gives you the number of GigaBytes available under systems mounted under `dev/` (`dev/` directory
+                is usually where virtual machine disks are mounted on Mac OS X). To get remote virtual machines mounted,
+                    I use sshfs utility tool, which is build on top of OXFuse.
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+</body>
+</html>

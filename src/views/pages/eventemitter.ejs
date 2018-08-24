@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+    <div class="container-fluid">
+        <div class="challenge-description">
+            <div class="challenge-title">
+                <h2>Event Emitter</h2>
+                <hr>
+            </div>
+
+
+            <div class="code-block">
+                <pre><code class="html"><%- eventemitter_code %></code></pre>
+            </div>
+
+            <div class="text-description">
+                <h4>What are some performance issues with your implementation?  Bugs?</h4>
+                <hr>
+                <p>
+                    The class is not able to statically, nor in run-time, limit the maximum number of listeners
+                    executed across different EventEmitter objects. Also, the class starts to slow down and takes
+                    approximately 800ms to add 5000 listeners.
+                    <br/>
+                    <br/>
+                    If one listener fails to emit, the EventEmitter class will throw an error and stop executing rest of listeners.
+                    Also, the EventEmitter class will execute all listeners before an error is thrown. Generally,
+                    it is better either to continue executing all functions or just rollback and prevent all
+                    executions altogether.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>

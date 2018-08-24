@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+    <div class="container-fluid">
+        <div class="challenge-description">
+            <div class="challenge-title">
+                <h2>Unique Array</h2>
+                <hr>
+            </div>
+
+            <div class="approach-title">
+                <h5>Approach 1: Using Hash Sets</h5>
+            </div>
+
+            <br/>
+
+            <div class="code-block">
+                <pre><code class="html"><%- uniquearray_code %></code></pre>
+            </div>
+
+            <div class="text-description">
+                <h4>Write the Big-O for time and space complexity for the above question. Explain why.</h4>
+                <hr>
+                <h5>Time Complexity: O(n)</h5>
+                <p>
+                    Assuming inputArray length is size n, looping over inputArray n times costs O(n) time.
+                    However, accessing and adding elements to hashSet is O(1) time.
+                </p>
+                <h5>Space Complexity: O(n)</h5>
+                <p>
+                    Assume inputArray length is size n.
+                    Worst case, if inputArray is already unique, then you would be adding n elements inside
+                    your hashSet, hence O(n) space.
+                </p>
+                <br>
+                <h4>
+                    Write the necessary error-checking. Explain how your error checking would be used during debugging.
+                </h4>
+                <hr>
+                <p>
+                    The two error checking sections I wrote include:
+                </p>
+                <ol>
+                    <li>whether inputArray is an array with length > 0</li>
+                    <li>whether each element inside inputArray is a number</li>
+                </ol>
+                <p>
+                    These checks with help with debugging whether the input is valid. Since the question already
+                    suggested that input list is an array of integers, this might be overkill.
+                </p>
+            </div>
+
+            <br/><br/>
+
+            <div class="approach-title">
+                <h5>Approach 2: Sorting Input Array</h5>
+            </div>
+
+            <br/>
+
+            <div class="code-block">
+                <pre><code class="html"><%- uniquearraysorted_code %></code></pre>
+            </div>
+
+            <div class="text-description">
+                <h4>Write the Big-O for time and space complexity for the above question. Explain why.</h4>
+                <hr>
+                <h5>Time Complexity: O(n log(n))</h5>
+                <p>
+                    Sorting an array on average costs O(n log(n)). However, different browsers use different
+                    types of sorts. For example:
+                </p>
+                <table id="browser-sorting-table">
+                    <thead>
+                        <tr>
+                            <th>Browser</th>
+                            <th>Algorithm</th>
+                            <th>Stability</th>
+                            <th>Average Big-O</th>
+                            <th>Worst Case Big-O</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Chrome</td>
+                            <td>QuickSort</td>
+                            <td>Unstable</td>
+                            <td>O(n log(n))</td>
+                            <td>O(n^2)</td>
+                        </tr>
+                        <tr>
+                            <td>Safari</td>
+                            <td>MergeSort</td>
+                            <td>Stable</td>
+                            <td>O(n log(n))</td>
+                            <td>O(n log(n))</td>
+                        </tr><tr>
+                            <td>FireFox</td>
+                            <td>MergeSort</td>
+                            <td>Stable</td>
+                            <td>O(n log(n))</td>
+                            <td>O(n log(n))</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+                <h5>Space Complexity: O(1)</h5>
+                <p>
+                    Assume inputArray length is size n.
+                    Worst case, if inputArray is already unique, then you would be adding n elements inside
+                    your hashSet, hence O(n) space.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>

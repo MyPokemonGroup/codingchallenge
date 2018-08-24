@@ -1,8 +1,13 @@
-let express = require("express")
+let express = require("express");
 let app = express();
 let path = require("path");
 
 let quicksort = require(path.join(__dirname, '../lib/quicksort.js')).quicksort;
+let limitedalert = require(path.join(__dirname, '../lib/limitedalert.js'));
+let eventemitter = require(path.join(__dirname, '../lib/eventemitter.js'));
+let { uniqueArray, uniqueArraySorted } = require(path.join(__dirname, '../lib/uniquearray.js'));
+let palindrome = require(path.join(__dirname, '../lib/palindrome.js'));
+let checkprice = require(path.join(__dirname, '../lib/checkprice.js'))
 
 //all the assets like bootstrap css/ style.css /jquery / bootstrap.js
 app.use(express.static(path.join(__dirname, '../public')));
@@ -27,9 +32,56 @@ app.get('/quicksort', function(req, res) {
     res.render("pages/quicksort", { quicksort_code: quicksort.fullString() });
 });
 
+app.get('/limitedalert', function(req, res) {
+    res.render("pages/limitedalert", { limitedalert_code: limitedalert.codeString() });
+});
+
+app.get('/eventemitter', function(req, res) {
+    res.render("pages/eventemitter", { eventemitter_code: eventemitter.codeString() });
+});
+
+app.get('/uniquearray', function(req, res) {
+    res.render("pages/uniquearray",
+        {
+            uniquearray_code: uniqueArray.codeString(),
+            uniquearraysorted_code: uniqueArraySorted.codeString()
+        }
+    );
+});
+
+app.get('/palindrome', function(req, res) {
+    res.render("pages/palindrome", { palindrome_code: palindrome.codeString() });
+});
+
+app.get('/git', function(req, res) {
+    res.render("pages/git");
+});
+
+app.get('/linux', function(req, res) {
+    res.render("pages/linux");
+});
+
+app.get('/database', function(req, res) {
+    res.render("pages/database");
+});
+
+app.get('/webscraping', function(req, res) {
+    res.render("pages/webscraping");
+});
+
 //unit tests for all the code
 app.get('/tests', function(req, res) {
     res.sendFile(path.join(__dirname, '../mochawesome-report/mochawesome.html'));
+});
+
+app.get('/checkprice/:asin', function(req, res) {
+    let asin = req.params.asin;
+
+    if (!asin) {
+        res.send('');
+    }
+
+    res.send(checkprice(asin));
 });
 
 let server = app.listen(3000, function() {

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/head %>
+    </head>
+    <body class="container">
+        <main>
+            <div class="container-fluid">
+                <header>
+                    <% include ../partials/header %>
+                </header>
+
+                <div class="challenge-description">
+                    <div class="challenge-title">
+                        <h2>Git Commands</h2>
+                        <hr>
+                    </div>
+
+                    <div class="text-description">
+                        <h4>create a new git repo</h4>
+                        <hr>
+                        <code>git init</code>
+                        <br><br>
+                        <h4>create branch in git repo</h4>
+                        <hr>
+                        <code>git checkout -b &ltbranchname&gt</code>
+                        <br><br>
+                        <h4>merge branch to master</h4>
+                        <hr>
+                        <code>
+                            git checkout master <br>
+                            git merge &ltbranchname&gt
+                        </code>
+                        <br><br>
+                        <p>
+                            You can also use the following if you want specific commits but your
+                            branch has diverged:
+                        </p>
+                        <code>
+                            git checkout master <br>
+                            git cherry-pick &ltcommit_hash&gt
+                        </code>
+                        <br><br>
+                        <h4>clean up branch by rewriting commits</h4>
+                        <hr>
+                        <code>
+                            git rebase -i HEAD~&ltnumber_of_commits_to_go_back_by&gt master<br>
+                            git checkout master<br>
+                            git merge branch
+                        </code>
+                        <br><br>
+                        <p>
+                            Once you rebase, you can type s (or squash) for combining commits in the built in
+                            terminal text editor. However, I usually just use f (forget), r (reword) to retype all those commits.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <% include ../partials/footer %>
+        </footer>
+    </body>
+</html>

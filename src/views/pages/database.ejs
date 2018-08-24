@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+<main>
+    <div class="container-fluid">
+        <header>
+            <% include ../partials/header %>
+        </header>
+
+        <div class="challenge-description">
+            <div class="challenge-title">
+                <h2>MySQL Commands</h2>
+                <hr>
+            </div>
+
+            <div class="text-description">
+                <h4>Write the MySQL CREATE statement for storing user records. You only need a userId and password.</h4>
+                <hr>
+                <br>
+                <code>
+                    CREATE TABLE User (<br>
+                      user_id BIGINT UNSIGNED NOT NULL PRIMARY KEY,<br>
+                      password BLOB NOT NULL<br>
+                    );
+                </code>
+                <br><br>
+                <p>*Note: Another way to store user_id is to use UUID/GUID, which I do not prefer `cause conversion is painful</p>
+                <br><br>
+                <h4>What datatype was used for the ID and why? What are the pros and cons of the ID? What are the security risks?</h4>
+                <hr>
+                <br>
+                <p>
+                    The data type for the ID is UNSIGNED BIGINT, which can store upt 1000 trillion users (or 1 septillion).
+                    <br><br>
+                    Pros: Simple and easy to parse, sort, search.
+                    <br>
+                    Cons: Not as human readable as VARCHAR (e.g. using email/uuid string as identifier). Deletion opens up
+                    a spot in the sequence of numbers and keeping track of available IDs will be difficult.
+                </p>
+                <br><br>
+                <h4>What encryption method is used for the password? What are the pros & cons? What are the security risks?</h4>
+                <hr>
+                <br>
+                <h6>One method is to use AES</h6>
+                <hr>
+                <p>
+                    <code>AES_ENCRYPT(str, key_str)</code> function should be used to encrypt the password and the
+                    <code>key_str</code> should be hidden in secret and only known by the server.
+                </p>
+                <br><br>
+                <h6>A better method is to use a 1-way hash</h6>
+                <hr>
+                <p>
+                    Why? Because having a reversible password is dangerous since a hacker might somehow be able to
+                    compromise the secret from your AES_ENCRYPT. Hence, we can use a one-way hash function like so:
+                    <br><br>
+                    <code>
+                        SET @salt = SHA2(CURRENT_TIMESTAMP(), 512);<br>
+                        INSERT into User (user_id, password) VALUES(1, CONCAT(@salt, SHA2(CONCAT(@salt, 'password_string')), 512));
+                    </code>
+                    <br><br>
+                    Have salt in front of your password in the same column, so when user inputs password:
+                </p>
+                <ol>
+                    <li>you can grab the first 512 bytes of blob data</li>
+                    <li>concatenate the salt and user's password</li>
+                    <li>hash the above concatenation to check against last 512 bytes of blob data</li>
+                    <li>In addition, if you really want, re-salt each time you successfully match</li>
+                </ol>
+                <br>
+                <p>...or you can do a combination of first and second method!</p>
+                <br><br>
+                <h6>How would you scale this table to support a spike of 100k registrations tomorrow.</h6>
+                <hr>
+                <br>
+                <p>
+                    If there were a lot of users trying to login to the application using the database, a cache can
+                    be used to offload some of the read requests. For example, you can use Redis [Key-Value] data store,
+                    Ignite [Application cache], or even a simple LRU Map inside the application inside your server
+                    to cache the information the user needs to login or perform their tasks.
+                    <br><br>
+                    If the application is slowing down just from the sheer number of registrations (100k is a lot). The
+                    spike in registrations can cause write locks in the database and may slow down the performance of the
+                    entire app. Therefore, an application Queue (such as AMQ, RabbitMQ, Kafka, SQS) can be used to:
+                </p>
+                <br>
+                <ul>
+                    <li>maintain the order in which the requests coming (for requests that depend on a previous request)</li>
+                    <li>prevent redundant request from coming through (if user is already created with an id, you cant use it again)</li>
+                    <li>throttle the number of messages coming through (limit processing power)</li>
+                    <li>limit the number of messages coming in (dropping some messages)</li>
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+</body>
+</html>

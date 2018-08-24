@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+    <div class="container-fluid">
+        <div class="challenge-description">
+            <div class="challenge-title">
+                <h2>Palindrome</h2>
+                <hr>
+            </div>
+
+
+            <div class="code-block">
+                <pre><code class="html"><%- palindrome_code %></code></pre>
+            </div>
+
+            <div class="text-description">
+                <h4>Write the Big-O for time and space complexity for the above question. Explain why.</h4>
+                <hr>
+                <h6>Time Complexity: O(n)</h6>
+                <p>
+                    Assuming the length of inputString is size n, then my algorithm takes n/2 time to finish.
+                    when left becomes >= right, then my while loop stops. O(n/2) is just O(n) linear time.
+                </p>
+                <br>
+                <h4>Write the necessary error-checking. Explain how your error checking would be used during debugging.</h4>
+                <hr>
+                <p>
+                    The two error checking sections I wrote include:
+                </p>
+                <ol>
+                    <li>whether inputString is of type `string`</li>
+                    <li>whether inputString's length is <= 1</li>
+                </ol>
+                <p>
+                    These two cases takes care of the edge cases imposed by the end user.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>

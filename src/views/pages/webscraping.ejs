@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+<main>
+    <div class="container-fluid">
+        <header>
+            <% include ../partials/header %>
+        </header>
+
+        <div class="challenge-description">
+            <div class="challenge-title">
+                <h2>Web Scraping</h2>
+                <hr>
+            </div>
+
+            <div class="text-description">
+                <h4>Describe the tools, software and libraries you would use to write a command-line
+                    utility that extracts the price from amazon for a product by ASIN.</h4>
+                <p>For example:</p>
+                <pre>
+                    `$ check-price 1492752177`
+                    $8.99
+                </pre>
+                <hr>
+                <h6>Tools used</h6>
+                <ul>
+                    <li>Python 3.7.x</li>
+                    <li>Bash/Shell</li>
+                    <li>Python `selenium.Chrome()` package</li>
+                    <li>Python `lxml` package</li>
+                    <li>Website `https://www.amazon.com/s?field-keywords=B075QN8NDH`</li>
+                    <li>Chrome Driver `https://chromedriver.storage.googleapis.com/index.html?path=2.27/`</li>
+                </ul>
+                <br>
+                <form id="check-price" onsubmit="checkPrice(event)">
+                    <label class="check-price-label">Amazon ASIN Price Checker</label><br>
+                    <div class="form-inline">
+                    <input id="check-price-input" type="text" class="form-check-inline form-control" placeholder="  ASIN">
+                    <input type="submit" class="btn btn-dark" value="Check Price">
+                    </div>
+                </form>
+                <br>
+                <div id="asin-price"></div>
+                <script type="text/javascript">
+                    function checkPrice(event) {
+                        event.preventDefault();
+                        let xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                            if (this.readyState === 4 && this.status === 200 && this.response) {
+                                document.getElementById('asin-price').innerHTML = this.response;
+                                document.getElementById('asin-price').classList.add('alert');
+                                document.getElementById('asin-price').classList.add('alert-success');
+                            }
+                        };
+                        xhttp.open("GET", "/checkprice/" + document.getElementById('check-price-input').value);
+                        xhttp.send();
+                        return false;
+                    }
+                </script>
+            </div>
+
+            <br>
+
+            <div class="code-block">
+<pre><code>    import os
+    import sys
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium import webdriver
+    from lxml import html
+
+    def get_price(url):
+      browser = webdriver.Chrome(executable_path=os.path.join(os.getcwd(), "chromedriver"))
+      browser.get(url)
+      delay = 10000
+      WebDriverWait(browser, delay)
+      tree = html.fromstring(browser.page_source)
+      price = tree.xpath("//span[@class='sx-price-whole']/text()")
+      cents = tree.xpath("//sup[@class='sx-price-fractional']/text()")
+      total_price = '$' + price[0] + '.' + cents[0]
+      print(total_price)
+      return total_price
+
+
+    def main(argv):
+      asin = argv[1]
+      url = 'https://www.amazon.com/s?field-keywords={}'.format(asin)
+      # url = 'http://www.amazon-asin.com/asincheck/?product_id={}'.format(asin)
+      get_price(url)
+
+    if __name__ == '__main__':
+      main(sys.argv)
+
+            </code></pre>
+            </div>
+
+            <div class="text-description">
+                <h4>Assume you have a MySQL database table containing 1,000,000 ASINs.
+                    Describe a system that would check the price of these as frequently as possible.</h4>
+                <hr>
+                <br>
+                <p>
+                    The python script above waits up to 10 seconds to process 1 ASIN. Assuming that every single
+                    ASIN takes 10 seconds to process, 1,000,000 ASINs will take around 116 days if we processed
+                    each ASIN one by one in order.
+                </p>
+                <p>
+                    To process ASINs faster, asynchronous calls must be leveraged. This will enable us to process
+                    all the ASINs in parallel.
+                </p>
+                <p>
+                    However, in order to ensure that ALL ASINs get processed on a semi-equal basis, a system would
+                    need to be designed to do that.
+                </p>
+                <p>
+                    The idea is to:
+                </p>
+                <ol>
+                    <li>
+                        Determine how often ASINs need to be updated
+                        <ul>
+                            <li>
+                                In the case of Earny, you probably want to at least update prices 3 times a day
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Create at least two Queue Topics
+                        <ul>
+                            <li>ProcessQueue: used for loading 1,000,000 ASINs from MySQL - mainly for keeping
+                            track of whether an ASIN has been processed recently to prevent overly updating
+                            one specific ASIN</li>
+                            <li>WriteQueue: used for updating the price table containing [ASIN, Price]</li>
+                        </ul>
+                    </li>
+                    <li>
+                        Create a load balanced, distributed application that can handle processing chunks
+                        ASIN price check operations in a certain period of time 3 times a day with minimal failure
+                    </li>
+                    <li>
+                        Figure out how many queues you need to operate in parallel
+                        <ul>
+                            <li>Will discuss later, need to factor in machines needed and scheduling</li>
+                        </ul>
+                    </li>
+                </ol>
+                <br>
+                <h4>Describe how you would schedule the batch processing of the price-checking system</h4>
+                <hr>
+                <br>
+                <p>
+                    Since the system needs to price check all 1,000,000 ASINs at least 3 times a day, the ASIN processing
+                    request should be enqueue'd onto three different queues with the same ProcessQueue topic in
+                    well-spaced out time frames.
+                </p>
+
+                <p>
+                    For example, let's say users are more active in buying items from amazon between 6 a.m. and
+                    12 p.m. Then, if we divide periods evenly, the critical times prices would need to be ready
+                    by  would be [6 a.m., 12 p.m., 6 p.m.]
+                </p>
+                <p>
+                    The system would probably need to schedule processing 6 hours before each point in time
+                    [12 a.m., 6 a.m., 12 p.m.] assuming that a whole queue can be processed in 6 hours time.
+                    (e.g. 6 hours before 6 a.m. would be 12 a.m., 6 hours before 12 p.m. would be 6 a.m., 6 hours
+                    before 6 p.m. would be 12 p.m.)
+                </p>
+                <br>
+                <h4>In what order do you process the ASINs? How do you manage that? Why was that chosen?</h4>
+                <hr>
+                <br>
+                <p>
+                    The ASINs are processed in first in first out basis (FIFO) since we are using queues
+                    to preserve order.
+                </p>
+                <p>
+                    In order for all ASINs to be processed equally we need to keep track of how long it has been
+                    since the ASINs are updated with a timestamp. The least recently used ASIN will be enqueue'd
+                    onto the ProcessQueue.
+                </p>
+                <p>
+                    The strategy of processing price-check requests in order based on timestamp is used to
+                    make sure that all ASINs are updated with a certain price and no one ASIN is hogging all
+                    the processing bandwidth.
+                </p>
+                <br>
+                <h4>How would you estimate the # of VMs needed to run this system?</h4>
+                <hr>
+                <br>
+                <p>
+                    Since the assumption is that the system must process 1,000,000 ASINs 3 times a day within
+                    6 hours, we can calculate the VMs we need by:
+                </p>
+                <ol>
+                    <li>Determining the amount of queues (3 Queues for 2 topics) 6 Queues total</li>
+                    <li>Finding out how many machines we need to reduce 116 days (see above) of work to 6 hours</li>
+                    <li>Partition the 1,000,000 ASINs into chunks of operations that need to be load balanced across the
+                    machines but also add wiggle room to those VM machines (increase # of machines if CPU is 100% loaded)</li>
+                </ol>
+                <br>
+                <h4>What indicators would you use to determine if the system is healthy?</h4>
+                <hr>
+                <ul>
+                    <li>CPU Usage - watch out if cpu exceeds 100%</li>
+                    <li>Disk Usage - watch out if disk is full but storage is not</li>
+                    <li>Swap Usage - watch out if swap is full (can be caused by paging)</li>
+                    <li>RAM Usage - watch out if RAM is 100% utilized</li>
+                </ul>
+                <br>
+                <p>
+                    Use a service like icinga2 with nagios plugis that monitors CPU, Disk, and Application Process Status to
+                    keep systems healthy, and know when to reboot, reallocate systems, etc.
+                </p>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+</body>
+</html>

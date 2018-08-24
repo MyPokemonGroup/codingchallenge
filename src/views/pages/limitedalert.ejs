@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+
+
+<main>
+    <div class="container-fluid">
+        <header>
+            <% include ../partials/header %>
+        </header>
+
+        <div class="challenge-description">
+            <div class="challenge-title">
+                <h2>Limited Alerts</h2>
+                <hr>
+            </div>
+
+
+            <div class  ="code-block">
+                <pre><code class="html"><%- limitedalert_code %></code></pre>
+            </div>
+
+            <div class="text-description">
+                <h4>Can you do it without exposing a global variable? Why would that be important?</h4>
+                <hr>
+                <p>
+                    Yes, wrap the global variable in a function,
+                    and if you need that variable in another function, use:
+                    <br/>
+                    <ul>
+                        <li>`bind` with the function scope</li>
+                        <li>`call` with the function scope</li>
+                        <li>implement a getter within the function</li>
+                    </ul>
+                    <br/><br/>
+                    Exposing a global variable will pollute the global scope.
+                    One can accidentally override/conflict some built in functions in the browser window's
+                    global scope or another global variable specified at the top level with the same name.
+                    However, if you use the `let` keyword, javascript will error out with
+                    `Identifier has already been declared` at runtime (yay!).
+                </p>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>

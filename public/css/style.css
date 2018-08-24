@@ -1,31 +1,33 @@
 .navbar {
-    background-color: #e8e8e8;
+    background-color: #fdbb46;
+    position: relative;
+    top: 0;
 }
 .navbar .navbar-brand {
-    color: #0088e1;
+    color: #000000;
 }
 .navbar .navbar-brand:hover,
 .navbar .navbar-brand:focus {
-    color: #00b0ff;
+    color: #727272;
 }
 .navbar .navbar-text {
-    color: #0088e1;
+    color: #000000;
 }
 .navbar .navbar-text a {
-    color: #00b0ff;
+    color: #727272;
 }
 .navbar .navbar-text a:hover,
 .navbar .navbar-text a:focus {
-    color: #00b0ff;
+    color: #727272;
 }
 .navbar .navbar-nav .nav-link {
-    color: #0088e1;
+    color: #000000;
     border-radius: .25rem;
     margin: 0 0.25em;
 }
 .navbar .navbar-nav .nav-link:not(.disabled):hover,
 .navbar .navbar-nav .nav-link:not(.disabled):focus {
-    color: #00b0ff;
+    color: #727272;
 }
 .navbar .navbar-nav .nav-item.active .nav-link,
 .navbar .navbar-nav .nav-item.active .nav-link:hover,
@@ -33,111 +35,172 @@
 .navbar .navbar-nav .nav-item.show .nav-link,
 .navbar .navbar-nav .nav-item.show .nav-link:hover,
 .navbar .navbar-nav .nav-item.show .nav-link:focus {
-    color: #00b0ff;
-    background-color: #c1c1c1;
+    color: #727272;
+    background-color: #e1a53b;
 }
 .navbar .navbar-toggle {
-    border-color: #c1c1c1;
+    border-color: #e1a53b;
 }
 .navbar .navbar-toggle:hover,
 .navbar .navbar-toggle:focus {
-    background-color: #c1c1c1;
+    background-color: #e1a53b;
 }
 .navbar .navbar-toggle .navbar-toggler-icon {
-    color: #0088e1;
+    color: #000000;
 }
 .navbar .navbar-collapse,
 .navbar .navbar-form {
-    border-color: #0088e1;
+    border-color: #000000;
 }
 .navbar .navbar-link {
-    color: #0088e1;
+    color: #000000;
 }
 .navbar .navbar-link:hover {
-    color: #00b0ff;
+    color: #727272;
 }
 
 @media (max-width: 575px) {
     .navbar-expand-sm .navbar-nav .show .dropdown-menu .dropdown-item {
-        color: #0088e1;
+        color: #000000;
     }
     .navbar-expand-sm .navbar-nav .show .dropdown-menu .dropdown-item:hover,
     .navbar-expand-sm .navbar-nav .show .dropdown-menu .dropdown-item:focus {
-        color: #00b0ff;
+        color: #727272;
     }
     .navbar-expand-sm .navbar-nav .show .dropdown-menu .dropdown-item.active {
-        color: #00b0ff;
-        background-color: #c1c1c1;
+        color: #727272;
+        background-color: #e1a53b;
     }
 }
 
 @media (max-width: 767px) {
     .navbar-expand-md .navbar-nav .show .dropdown-menu .dropdown-item {
-        color: #0088e1;
+        color: #000000;
     }
     .navbar-expand-md .navbar-nav .show .dropdown-menu .dropdown-item:hover,
     .navbar-expand-md .navbar-nav .show .dropdown-menu .dropdown-item:focus {
-        color: #00b0ff;
+        color: #727272;
     }
     .navbar-expand-md .navbar-nav .show .dropdown-menu .dropdown-item.active {
-        color: #00b0ff;
-        background-color: #c1c1c1;
+        color: #727272;
+        background-color: #e1a53b;
     }
 }
 
 @media (max-width: 991px) {
     .navbar-expand-lg .navbar-nav .show .dropdown-menu .dropdown-item {
-        color: #0088e1;
+        color: #000000;
     }
     .navbar-expand-lg .navbar-nav .show .dropdown-menu .dropdown-item:hover,
     .navbar-expand-lg .navbar-nav .show .dropdown-menu .dropdown-item:focus {
-        color: #00b0ff;
+        color: #727272;
     }
     .navbar-expand-lg .navbar-nav .show .dropdown-menu .dropdown-item.active {
-        color: #00b0ff;
-        background-color: #c1c1c1;
+        color: #727272;
+        background-color: #e1a53b;
     }
 }
 
 @media (max-width: 1199px) {
     .navbar-expand-xl .navbar-nav .show .dropdown-menu .dropdown-item {
-        color: #0088e1;
+        color: #000000;
     }
     .navbar-expand-xl .navbar-nav .show .dropdown-menu .dropdown-item:hover,
     .navbar-expand-xl .navbar-nav .show .dropdown-menu .dropdown-item:focus {
-        color: #00b0ff;
+        color: #727272;
     }
     .navbar-expand-xl .navbar-nav .show .dropdown-menu .dropdown-item.active {
-        color: #00b0ff;
-        background-color: #c1c1c1;
+        color: #727272;
+        background-color: #e1a53b;
     }
 }
 
 .navbar-expand .navbar-nav .show .dropdown-menu .dropdown-item {
-    color: #0088e1;
+    color: #000000;
 }
 .navbar-expand .navbar-nav .show .dropdown-menu .dropdown-item:hover,
 .navbar-expand .navbar-nav .show .dropdown-menu .dropdown-item:focus {
-    color: #00b0ff;
+    color: #727272;
 }
 .navbar-expand .navbar-nav .show .dropdown-menu .dropdown-item.active {
-    color: #00b0ff;
-    background-color: #c1c1c1;
+    color: #727272;
+    background-color: #e1a53b;
 }
 
-
+body {
+    background-color: #fdd17c;
+}
 .navbar-nav > li {
     padding-left: 30px;
 }
-.homepage-description {
-    margin-top: 1%;
-    margin-bottom: 1%;
-    padding-top: 2%;
-    padding-bottom: 2%;
-    /*text-align: center;*/
-    background-color: whitesmoke;
+.navbar-nav a {
+    color: #000000;
+    text-decoration: none;
 }
-.code {
-    white-space: pre-wrap;
-    padding-left: 15%;
+.nav-text {
+    font-size: 18pt;
+    font-weight: 500;
+    font-variant: simplified;
+}
+.challenge-description {
+    background-color: #fde6bc;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    padding-top: 3%;
+    padding-bottom: 3%;
+    /*text-align: center;*/
+}
+.code-block {
+    height: 500px;
+    overflow: auto;
+}
+.homepage-description {
+    background-color: #fde6bc;
+    margin-top: 12%;
+    margin-bottom: 12%;
+    padding-top: 5%;
+    padding-bottom: 5%;
+    /*text-align: center;*/
+}
+.welcome {
+    margin: 2%;
+}
+.text-description {
+    padding: 5%;
+}
+.challenge-title {
+    margin-left: 2%;
+    margin-right: 2%;
+}
+.approach-title {
+    margin-left: 2%;
+    margin-right: 2%;
+    font-weight: 500;
+}
+#browser-sorting-table {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+#browser-sorting-table td, table th {
+    border: 1px solid #000000;
+    padding: 8px;
+}
+
+#browser-sorting-table tr:hover(even) {
+    background-color: #fdd17c;
+}
+#browser-sorting-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #e1a53b;
+    color: #000;
+}
+.check-price-label {
+    font-weight: 500;
+    border-bottom: 2px solid;
+}
+#asin-price {
+    width: 35%;
 }
